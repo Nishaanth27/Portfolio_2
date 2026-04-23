@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sora: ['Sora', 'sans-serif'],
+        mono: ['Space Mono', 'monospace']
+      }
+    }
+  }
+}
+</script>
+  <style>
+html, body { height: 100%; margin: 0; font-family: 'Sora', sans-serif; scroll-behavior: smooth; }
+
+/* Custom Cursor */
+.cursor-dot { width: 8px; height: 8px; background: #6366f1; border-radius: 50%; position: fixed; pointer-events: none; z-index: 99999; transition: transform 0.1s; }
+.cursor-ring { width: 36px; height: 36px; border: 2px solid #6366f1; border-radius: 50%; position: fixed; pointer-events: none; z-index: 99998; transition: transform 0.15s ease-out, width 0.2s, height 0.2s, border-color 0.2s; transform: translate(-50%, -50%); }
+.cursor-ring.hover { width: 56px; height: 56px; border-color: #a5b4fc; }
+
+/* Theme transitions */
+*, *::before, *::after { transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s; }
+
+/* Dark mode palette */
+.dark { --bg-primary: #0a0a0f; --bg-card: #12121a; --bg-card-hover: #1a1a28; --text-primary: #e8e8ed; --text-secondary: #9898a6; --accent: #6366f1; --accent-glow: rgba(99,102,241,0.15); }
+:root { --bg-primary: #fafafa; --bg-card: #ffffff; --bg-card-hover: #f3f4f6; --text-primary: #111118; --text-secondary: #5a5a6e; --accent: #6366f1; --accent-glow: rgba(99,102,241,0.08); }
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Nav */
+.nav-blur { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+/* Skill pill animation */
+.skill-pill { transition: transform 0.2s, box-shadow 0.2s; }
+.skill-pill:hover { transform: translateY(-3px); }
+
+/* Card hover */
+.project-card { transition: transform 0.25s, box-shadow 0.25s; }
+.project-card:hover { transform: translateY(-6px); }
+
+/* cert card */
+.cert-card { transition: transform 0.25s, box-shadow 0.25s; }
+.cert-card:hover { transform: translateY(-4px); }
+
+/* Profile image styling */
+.profile-img { object-fit: cover; object-position: center; }
+
+/* gradient text */
+.gradient-text { background: linear-gradient(135deg, #6366f1, #a78bfa, #6366f1); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease infinite; }
+@keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+/* Mobile menu */
+.mobile-menu { transform: translateX(100%); transition: transform 0.35s cubic-bezier(.22,1,.36,1); }
+.mobile-menu.open { transform: translateX(0); }
+
+/* Glow border for hero image */
+.glow-border { position: relative; }
+.glow-border::before { content: ''; position: absolute; inset: -4px; border-radius: inherit; background: linear-gradient(135deg, #6366f1, #a78bfa, #818cf8); z-index: -1; opacity: 0.7; filter: blur(8px); }
+
+/* Section divider */
+.section-divider { height: 1px; background: linear-gradient(to right, transparent, var(--accent), transparent); opacity: 0.2; }
+
+/* Hamburger anim */
+.ham-line { transition: transform 0.3s, opacity 0.3s; transform-origin: center; }
+.ham-open .ham-top { transform: translateY(7px) rotate(45deg); }
+.ham-open .ham-mid { opacity: 0; }
+.ham-open .ham-bot { transform: translateY(-7px) rotate(-45deg); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 3px; }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto" style="background: var(--bg-primary); color: var(--text-primary);">
+  <!-- Custom Cursor -->
+  <div class="cursor-dot hidden md:block" id="cursorDot"></div>
+  <div class="cursor-ring hidden md:block" id="cursorRing"></div><!-- Navigation -->
+  <nav id="mainNav" class="fixed top-0 left-0 w-full z-50 nav-blur" style="background: rgba(10,10,15,0.8); border-bottom: 1px solid rgba(99,102,241,0.1);">
+   <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+    <a href="#hero" class="font-mono font-bold text-lg" style="color: #6366f1;">&lt;/&gt;</a>
+    <div class="hidden md:flex items-center gap-8">
+     <a href="#hero" class="nav-link text-sm font-medium hover:text-indigo-400 transition-colors" style="color: var(--text-secondary);">Home</a> <a href="#about" class="nav-link text-sm font-medium hover:text-indigo-400 transition-colors" style="color: var(--text-secondary);">About</a> <a href="#experience" class="nav-link text-sm font-medium hover:text-indigo-400 transition-colors" style="color: var(--text-secondary);">Experience</a> <a href="#skills" class="nav-link text-sm font-medium hover:text-indigo-400 transition-colors" style="color: var(--text-secondary);">Skills</a> <a href="#projects" class="nav-link text-sm font-medium hover:text-indigo-400 transition-colors" style="color: var(--text-secondary);">Projects</a> <a href="#contact" class="nav-link text-sm font-medium hover:text-indigo-400 transition-colors" style="color: var(--text-secondary);">Contact</a> <button id="themeToggle" class="w-9 h-9 rounded-full flex items-center justify-center border" style="border-color: rgba(99,102,241,0.3); color: var(--text-secondary);" aria-label="Toggle theme"> <i data-lucide="moon" id="moonIcon" style="width:18px;height:18px;"></i> <i data-lucide="sun" id="sunIcon" style="width:18px;height:18px;display:none;"></i> </button>
+    </div><!-- Mobile hamburger -->
+    <div class="flex md:hidden items-center gap-3">
+     <button id="themeToggleMob" class="w-9 h-9 rounded-full flex items-center justify-center border" style="border-color: rgba(99,102,241,0.3); color: var(--text-secondary);" aria-label="Toggle theme"> <i data-lucide="moon" class="moon-mob" style="width:18px;height:18px;"></i> <i data-lucide="sun" class="sun-mob" style="width:18px;height:18px;display:none;"></i> </button> <button id="hamBtn" class="w-9 h-9 flex flex-col items-center justify-center gap-[5px]" aria-label="Menu"> <span class="ham-line ham-top block w-5 h-[2px] rounded" style="background: var(--text-primary);"></span> <span class="ham-line ham-mid block w-5 h-[2px] rounded" style="background: var(--text-primary);"></span> <span class="ham-line ham-bot block w-5 h-[2px] rounded" style="background: var(--text-primary);"></span> </button>
+    </div>
+   </div>
+  </nav><!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 w-64 h-full z-50" style="background: var(--bg-card); border-left: 1px solid rgba(99,102,241,0.15);">
+   <div class="flex flex-col pt-20 px-8 gap-6">
+    <a href="#hero" class="mob-link text-base font-medium" style="color: var(--text-primary);">Home</a> <a href="#about" class="mob-link text-base font-medium" style="color: var(--text-primary);">About</a> <a href="#experience" class="mob-link text-base font-medium" style="color: var(--text-primary);">Experience</a> <a href="#skills" class="mob-link text-base font-medium" style="color: var(--text-primary);">Skills</a> <a href="#projects" class="mob-link text-base font-medium" style="color: var(--text-primary);">Projects</a> <a href="#contact" class="mob-link text-base font-medium" style="color: var(--text-primary);">Contact</a>
+   </div>
+  </div>
+  <div id="menuOverlay" class="fixed inset-0 z-40 hidden" style="background: rgba(0,0,0,0.5);"></div><!-- HERO SECTION -->
+  <section id="hero" class="min-h-full flex items-center pt-16">
+   <div class="max-w-6xl mx-auto px-6 w-full py-20">
+    <div class="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+     <div class="flex-1 text-center md:text-left order-2 md:order-1">
+      <p class="font-mono text-sm mb-3 reveal" style="color: #6366f1;">Hello, I'm</p>
+      <h1 id="heroName" class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 gradient-text reveal" style="animation-delay:0.1s;">Nishaanth</h1>
+      <p id="heroTagline" class="text-xl sm:text-2xl font-medium mb-6 reveal" style="color: var(--text-secondary); animation-delay:0.2s;">Software Developer | Backend</p>
+      <p id="heroDesc" class="text-base max-w-lg mb-8 leading-relaxed reveal" style="color: var(--text-secondary); animation-delay:0.3s;">Passionate developer specializing in building robust, scalable backend systems and elegant frontends. I turn complex problems into clean, efficient solutions.</p>
+      <div class="flex gap-4 justify-center md:justify-start reveal" style="animation-delay:0.4s;">
+       <button id="downloadBtn" class="px-7 py-3 rounded-full font-medium text-sm text-white flex items-center gap-2" style="background: #6366f1;"> <i data-lucide="download" style="width:18px;height:18px;"></i> Download Resume </button> <a href="#projects" class="px-7 py-3 rounded-full font-medium text-sm border" style="border-color: rgba(99,102,241,0.4); color: #6366f1;">View Work</a>
+      </div>
+     </div>
+     <div class="flex-1 order-1 md:order-2 reveal flex justify-center md:justify-end" style="animation-delay:0.2s;">
+      <div class="glow-border rounded-2xl w-full max-w-md md:max-w-lg">
+       <!-- REPLACE src URL with your image --> <img src="Personal.JPG" alt="Profile Photo" class="profile-img w-full h-auto rounded-2xl" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#6366f1,#a78bfa)';this.alt='Photo';">
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- ABOUT SECTION -->
+  <section id="about" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">About <span style="color:#6366f1;">Me</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+     <div class="flex-shrink-0 reveal">
+      <div class="rounded-2xl overflow-hidden" style="box-shadow: 0 0 40px rgba(99,102,241,0.12);">
+       <!-- REPLACE src URL with your image --> <img src="Aboutme.png" alt="About Photo" class="profile-img w-64 h-80 sm:w-72 sm:h-96 rounded-2xl" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#6366f1,#a78bfa)';this.alt='Photo';">
+      </div>
+     </div>
+     <div class="flex-1 reveal">
+      <p id="aboutText" class="text-base leading-relaxed mb-6" style="color: var(--text-secondary);">I am a dedicated Full Stack Java Developer with a strong foundation in backend technologies and a keen eye for building seamless user experiences. With expertise spanning Spring Boot, Microservices, AWS, and modern frontend frameworks, I thrive on creating end-to-end solutions that are both performant and maintainable. I am always eager to learn emerging technologies and contribute to impactful projects.</p>
+      <div class="grid grid-cols-2 gap-4">
+       <div class="p-4 rounded-xl" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+        <p class="text-2xl font-bold" style="color:#6366f1;">1+</p>
+        <p class="text-sm" style="color:var(--text-secondary);">Years Experience</p>
+       </div>
+       <div class="p-4 rounded-xl" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+        <p class="text-2xl font-bold" style="color:#6366f1;">3+</p>
+        <p class="text-sm" style="color:var(--text-secondary);">Projects Built</p>
+       </div>
+       <div class="p-4 rounded-xl" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+        <p class="text-2xl font-bold" style="color:#6366f1;">10+</p>
+        <p class="text-sm" style="color:var(--text-secondary);">Certifications</p>
+       </div>
+       <div class="p-4 rounded-xl" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+        <p class="text-2xl font-bold" style="color:#6366f1;">13+</p>
+        <p class="text-sm" style="color:var(--text-secondary);">Skills</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- EXPERIENCE SECTION -->
+  <section id="experience" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">My <span style="color:#6366f1;">Experience</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="max-w-3xl mx-auto reveal">
+     <div class="relative pl-8 border-l-2" style="border-color: #6366f1;">
+      <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full" style="background:#6366f1;"></div>
+      <div class="p-6 rounded-2xl mb-6" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+       <span id="expDuration" class="font-mono text-xs px-3 py-1 rounded-full" style="background: var(--accent-glow); color: #6366f1;">Sept 2027 - Present</span>
+       <h3 id="expTitle" class="text-xl font-bold mt-3 mb-1">Senior Software Engineer</h3>
+       <p id="expCompany" class="text-sm font-medium mb-3" style="color:#6366f1;">Capgemini</p>
+       <p id="expDesc" class="text-sm leading-relaxed" style="color:var(--text-secondary);">Engineered scalable Java microservices, streamlined CI/CD deployments, and improved system reliability and security through proactive debugging and vulnerability remediation.</p>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- SOCIALS SECTION -->
+  <section id="socials" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">Find Me <span style="color:#6366f1;">Online</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-8 reveal">
+     <a href="https://github.com/Nishaanth27" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center gap-4 p-8 rounded-2xl w-64 project-card" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+      <div class="w-20 h-20 rounded-2xl overflow-hidden" style="background: var(--bg-card-hover);">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="w-full h-full p-3 profile-img" loading="lazy" onerror="this.style.background='#6366f1';this.alt='GH';">
+      </div><span class="font-semibold text-lg">GitHub</span> <span class="text-sm" style="color:var(--text-secondary);">View my repositories</span> </a> <!-- REPLACE href and src --> 
+      <a href="https://www.linkedin.com/in/nishaanth2701/" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center gap-4 p-8 rounded-2xl w-64 project-card" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+      <div class="w-20 h-20 rounded-2xl overflow-hidden" style="background: var(--bg-card-hover);">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="w-full h-full p-3 profile-img" loading="lazy" onerror="this.style.background='#6366f1';this.alt='LI';">
+      </div><span class="font-semibold text-lg">LinkedIn</span> <span class="text-sm" style="color:var(--text-secondary);">Connect with me</span> </a>
+    </div>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- EDUCATION SECTION -->
+  <section id="education" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">My <span style="color:#6366f1;">Education</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="max-w-3xl mx-auto">
+     <div class="relative pl-8 border-l-2" style="border-color: #6366f1;">
+      <!-- Education 1 -->
+      <div class="reveal relative mb-10">
+       <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full" style="background:#6366f1;"></div>
+       <div class="p-6 rounded-2xl" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+        <span class="font-mono text-xs px-3 py-1 rounded-full" style="background:var(--accent-glow);color:#6366f1;">2020 - 2024</span>
+        <h3 class="text-lg font-bold mt-3 mb-1">Bachelor of Technology</h3>
+        <p class="text-sm" style="color:#6366f1;">SRM Institute of Science and Technology</p>
+        <p class="text-sm mt-2" style="color:var(--text-secondary);">Computer Science with Specialization in AI & ML</p>
+       </div>
+      </div><!-- Education 2 -->
+      <div class="reveal relative mb-10">
+       <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full" style="background:#6366f1;"></div>
+       <div class="p-6 rounded-2xl" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+        <span class="font-mono text-xs px-3 py-1 rounded-full" style="background:var(--accent-glow);color:#6366f1;">2018 - 2020</span>
+        <h3 class="text-lg font-bold mt-3 mb-1">Higher Secondary (12th)</h3>
+        <p class="text-sm" style="color:#6366f1;">Kalashetra Matriculation Higher Secondary School</p>
+        <p class="text-sm mt-2" style="color:var(--text-secondary);">Science Stream ( Biology | Maths ) </p>
+       </div>
+      </div><!-- Education 3 -->
+      <div class="reveal relative">
+       <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full" style="background:#6366f1;"></div>
+       <div class="p-6 rounded-2xl" style="background: var(--bg-card); border: 1px solid rgba(99,102,241,0.1);">
+        <span class="font-mono text-xs px-3 py-1 rounded-full" style="background:var(--accent-glow);color:#6366f1;">2018</span>
+        <h3 class="text-lg font-bold mt-3 mb-1">Secondary (10th)</h3>
+        <p class="text-sm" style="color:#6366f1;">Kalashetra Matriculation Higher Secondary School</p>
+        <p class="text-sm mt-2" style="color:var(--text-secondary);">General Studies</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- SKILLS SECTION -->
+  <section id="skills" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">My <span style="color:#6366f1;">Skills</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto reveal">
+     <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#e44d26;">●</span> HTML </span> 
+      <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#264de4;">●</span> CSS </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#7952b3;">●</span> Bootstrap </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#f89820;">●</span> Java </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#6db33f;">●</span> Spring Boot </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#6db33f;">●</span> Microservices </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#336791;">●</span> SQL </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#ff6c37;">●</span> Postman </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#e7063e;">●</span> Kafka </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#055017;">●</span> GitHub </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#f05032;">●</span> Git </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#ff9900;">●</span> AWS </span> <span class="skill-pill px-5 py-3 rounded-xl font-medium text-sm" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.15);color:var(--text-primary);"> 
+      <span style="color:#a78bfa;">●</span> AI Tools </span>
+    </div>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- CERTIFICATES SECTION -->
+  <section id="certificates" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">Certificates &amp; <span style="color:#6366f1;">Certifications</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 reveal">
+     <!-- Certificate cards 1-12. Replace title and add href -->
+      <a href="https://drive.google.com/file/d/1FG8rf8WhI0KGxUDXRFno7R8jL_0vd6iV/view" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">Java Full stack development</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">FITA Academy</p>
+     </div>
+     </a>
+     <a href="https://cp.certmetrics.com/amazon/en/public/verify/credential/340b0a6351ee40aa92fc488494a82ed5" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">AWS Cloud Practitioner</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Amazon Web Services</p>
+     </div>
+     </a>
+     <a href="https://www.udemy.com/certificate/UC-b62356e9-bc9e-4845-b636-08017142364f/" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">Java 8 </h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Udemy</p>
+     </div>
+     </a>
+     <a href="https://www.udemy.com/certificate/UC-04554b55-d8d3-4c3d-9ceb-9dda278ee697/" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">Java 21</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Udemy</p>
+     </div>
+     </a>
+     <a href="https://www.udemy.com/certificate/UC-88532abf-78e1-4780-852e-6205ebcc6f3f/" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">Spring Boot , Spring</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Udemy</p>
+     </div>
+     </a>
+     <a href="https://www.udemy.com/certificate/UC-4797997c-c664-4dd9-ba3f-3cdcdeea182d/" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">Microservices</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Udemy</p>
+     </div>
+     </a>
+     <a href="https://www.udemy.com/certificate/UC-94a5f512-6db4-45a4-9ff1-cf330f33e2e0/" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">CI & CD</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Udemy</p>
+     </div>
+     </a>
+     <a href="https://www.udemy.com/certificate/UC-c4514d1e-eb57-49b4-9c58-32192f028a42/" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">Docker</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Udemy</p>
+     </div>
+     </a>
+     <a href="https://www.udemy.com/certificate/UC-757478d3-7490-4238-aa4b-7d501b4dc703/" target="_blank">
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">React</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">Udemy</p>
+     </div>
+     </a>
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">---</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">---</p>
+     </div>
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">---</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">---</p>
+     </div>
+     <div class="cert-card p-5 rounded-2xl flex flex-col" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <i data-lucide="award" style="color:#6366f1;width:28px;height:28px;" class="mb-3"></i>
+      <h4 class="font-semibold text-sm mb-1">---</h4>
+      <p class="text-xs mt-auto" style="color:var(--text-secondary);">---</p>
+     </div>
+    </div>
+    <div class="text-center mt-10 reveal">
+    <a href="https://www.linkedin.com/in/nishaanth2701/details/certifications/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-7 py-3 rounded-full font-medium text-sm border" style="border-color:rgba(99,102,241,0.4);color:#6366f1;"> View More Certificates <i data-lucide="external-link" style="width:16px;height:16px;"></i> </a>
+    </div>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- PROJECTS SECTION -->
+  <section id="projects" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">My <span style="color:#6366f1;">Projects</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+     <!-- Project 1 -->
+     <div class="project-card p-6 rounded-2xl flex flex-col reveal" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <div class="flex items-center justify-between mb-4">
+       <i data-lucide="folder" style="color:#6366f1;width:32px;height:32px;"></i>
+       <div class="flex gap-3">
+        <!-- REPLACE href --> 
+         <a href="https://github.com/Nishaanth27/PRODIGY_WD_03" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i data-lucide="github" style="width:20px;height:20px;color:var(--text-secondary);"></i></a> 
+         <a href="https://nishaanth27.github.io/PRODIGY_WD_03/" target="_blank" rel="noopener noreferrer" aria-label="Live Demo"><i data-lucide="external-link" style="width:20px;height:20px;color:var(--text-secondary);"></i></a>
+       </div>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Game - Tic tac toe</h3>
+      <p class="text-sm flex-1" style="color:var(--text-secondary);">A tic tac toe game built using Html , css and JS . </p>
+      <div class="flex gap-2 mt-4 flex-wrap">
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">HTML ,css</span> 
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">Java Script</span>
+      </div>
+     </div><!-- Project 2 -->
+     <div class="project-card p-6 rounded-2xl flex flex-col reveal" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <div class="flex items-center justify-between mb-4">
+       <i data-lucide="folder" style="color:#6366f1;width:32px;height:32px;"></i>
+       <div class="flex gap-3">
+        <a href="https://github.com/Nishaanth27/PRODIGY_WD_02" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i data-lucide="github" style="width:20px;height:20px;color:var(--text-secondary);"></i></a> 
+        <a href="https://nishaanth27.github.io/PRODIGY_WD_02/" target="_blank" rel="noopener noreferrer" aria-label="Live Demo"><i data-lucide="external-link" style="width:20px;height:20px;color:var(--text-secondary);"></i></a>
+       </div>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Stopwatch Application</h3>
+      <p class="text-sm flex-1" style="color:var(--text-secondary);">An application with a built in clock and a stopwatch with Start lap and reset functions</p>
+      <div class="flex gap-2 mt-4 flex-wrap">
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">HTML , CSS</span> 
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">Java Script</span>
+      </div>
+     </div><!-- Project 3 -->
+     <div class="project-card p-6 rounded-2xl flex flex-col reveal" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <div class="flex items-center justify-between mb-4">
+       <i data-lucide="folder" style="color:#6366f1;width:32px;height:32px;"></i>
+       <div class="flex gap-3">
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i data-lucide="github" style="width:20px;height:20px;color:var(--text-secondary);"></i></a> 
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Live Demo"><i data-lucide="external-link" style="width:20px;height:20px;color:var(--text-secondary);"></i></a>
+       </div>
+      </div>
+      <h3 class="font-bold text-lg mb-2">---</h3>
+      <p class="text-sm flex-1" style="color:var(--text-secondary);">Coming soon ...!</p>
+      <div class="flex gap-2 mt-4 flex-wrap">
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">---</span> 
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">--</span>
+      </div>
+     </div><!-- Project 4 -->
+     <div class="project-card p-6 rounded-2xl flex flex-col reveal" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <div class="flex items-center justify-between mb-4">
+       <i data-lucide="folder" style="color:#6366f1;width:32px;height:32px;"></i>
+       <div class="flex gap-3">
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i data-lucide="github" style="width:20px;height:20px;color:var(--text-secondary);"></i></a> 
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Live Demo"><i data-lucide="external-link" style="width:20px;height:20px;color:var(--text-secondary);"></i></a>
+       </div>
+      </div>
+      <h3 class="font-bold text-lg mb-2">---</h3>
+      <p class="text-sm flex-1" style="color:var(--text-secondary);">Coming soon ...!</p>
+      <div class="flex gap-2 mt-4 flex-wrap">
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">---</span> 
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">---</span>
+      </div>
+     </div><!-- Project 5 -->
+     <div class="project-card p-6 rounded-2xl flex flex-col reveal" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <div class="flex items-center justify-between mb-4">
+       <i data-lucide="folder" style="color:#6366f1;width:32px;height:32px;"></i>
+       <div class="flex gap-3">
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i data-lucide="github" style="width:20px;height:20px;color:var(--text-secondary);"></i></a> 
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Live Demo"><i data-lucide="external-link" style="width:20px;height:20px;color:var(--text-secondary);"></i></a>
+       </div>
+      </div>
+      <h3 class="font-bold text-lg mb-2">---</h3>
+      <p class="text-sm flex-1" style="color:var(--text-secondary);">Coming soon ...!</p>
+      <div class="flex gap-2 mt-4 flex-wrap">
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">---</span> 
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">---</span>
+      </div>
+     </div><!-- Project 6 -->
+     <div class="project-card p-6 rounded-2xl flex flex-col reveal" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+      <div class="flex items-center justify-between mb-4">
+       <i data-lucide="folder" style="color:#6366f1;width:32px;height:32px;"></i>
+       <div class="flex gap-3">
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i data-lucide="github" style="width:20px;height:20px;color:var(--text-secondary);"></i></a> 
+        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Live Demo"><i data-lucide="external-link" style="width:20px;height:20px;color:var(--text-secondary);"></i></a>
+       </div>
+      </div>
+      <h3 class="font-bold text-lg mb-2">---</h3>
+      <p class="text-sm flex-1" style="color:var(--text-secondary);">Coming soon ...!</p>
+      <div class="flex gap-2 mt-4 flex-wrap">
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">---</span> 
+       <span class="text-xs px-2 py-1 rounded" style="background:var(--accent-glow);color:#6366f1;">---</span>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="text-center mt-10 reveal">
+     <a href="https://github.com/Nishaanth27?tab=repositories" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-7 py-3 rounded-full font-medium text-sm border" style="border-color:rgba(99,102,241,0.4);color:#6366f1;"> View More Projects <i data-lucide="external-link" style="width:16px;height:16px;"></i> </a>
+   </div>
+  </section>
+  <div class="section-divider max-w-4xl mx-auto"></div><!-- CONTACT SECTION -->
+  <section id="contact" class="py-24">
+   <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center mb-4 reveal">Get In <span style="color:#6366f1;">Touch</span></h2>
+    <div class="w-16 h-1 rounded mx-auto mb-16 reveal" style="background:#6366f1;"></div>
+    <div class="max-w-2xl mx-auto text-center reveal">
+     <p class="mb-10 text-base" style="color:var(--text-secondary);">I'm always open to new opportunities and collaborations. Feel free to reach out!</p>
+     <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+      <div class="flex items-center gap-3 px-6 py-4 rounded-xl" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+       <i data-lucide="phone" style="color:#6366f1;width:20px;height:20px;"></i> <span id="contactPhone" class="text-sm font-medium">+91 9345322043</span>
+      </div>
+      <div class="flex items-center gap-3 px-6 py-4 rounded-xl" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);">
+       <i data-lucide="mail" style="color:#6366f1;width:20px;height:20px;"></i> <span id="contactEmail" class="text-sm font-medium">nishaanthgunasekaran@gmail.com</span>
+      </div>
+     </div>
+     <div class="flex items-center justify-center gap-5">
+       <a href="https://www.instagram.com/_nxhaanth_?igsh=ZmNyMnZ1OXlqeWh5" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center project-card" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);" aria-label="Instagram"> <i data-lucide="instagram" style="width:20px;height:20px;color:#6366f1;"></i> </a> 
+       <a href="https://x.com/Nxhaanth" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center project-card" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);" aria-label="X / Twitter"> <i data-lucide="twitter" style="width:20px;height:20px;color:#6366f1;"></i> </a> 
+       <a href="https://www.linkedin.com/in/nishaanth2701/" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center project-card" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);" aria-label="LinkedIn"> <i data-lucide="linkedin" style="width:20px;height:20px;color:#6366f1;"></i> </a> 
+       <a href="https://github.com/Nishaanth27" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center project-card" style="background:var(--bg-card);border:1px solid rgba(99,102,241,0.1);" aria-label="GitHub"> <i data-lucide="github" style="width:20px;height:20px;color:#6366f1;"></i> </a>
+     </div>
+    </div>
+   </div>
+  </section><!-- FOOTER -->
+  <footer class="py-8 border-t" style="border-color:rgba(99,102,241,0.1);background:var(--bg-card);">
+   <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p class="font-mono text-sm" style="color:var(--text-secondary);">&lt;/&gt; Built with ❤️</p>
+    <p class="text-sm" style="color:var(--text-secondary);">© 2026 <span id="footerName">Nishaanth G</span>. All rights reserved.</p><a href="#hero" class="w-10 h-10 rounded-full flex items-center justify-center" style="background:var(--accent-glow);color:#6366f1;" aria-label="Back to top"> <i data-lucide="arrow-up" style="width:18px;height:18px;"></i> </a>
+   </div>
+  </footer>
+  <script>
+// ===== CUSTOM CURSOR =====
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  dot.style.left = mouseX - 4 + 'px'; dot.style.top = mouseY - 4 + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
+  ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .skill-pill, .project-card, .cert-card').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+});
+
+// ===== DARK / LIGHT MODE =====
+let isDark = true;
+document.documentElement.classList.add('dark');
+
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.classList.toggle('dark', isDark);
+
+  const bg = isDark ? '#0a0a0f' : '#fafafa';
+  const card = isDark ? '#12121a' : '#ffffff';
+  const cardHover = isDark ? '#1a1a28' : '#f3f4f6';
+  const textP = isDark ? '#e8e8ed' : '#111118';
+  const textS = isDark ? '#9898a6' : '#5a5a6e';
+  const glowBg = isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.08)';
+  const navBg = isDark ? 'rgba(10,10,15,0.8)' : 'rgba(250,250,250,0.85)';
+
+  document.body.style.background = bg; document.body.style.color = textP;
+  document.documentElement.style.setProperty('--bg-primary', bg);
+  document.documentElement.style.setProperty('--bg-card', card);
+  document.documentElement.style.setProperty('--bg-card-hover', cardHover);
+  document.documentElement.style.setProperty('--text-primary', textP);
+  document.documentElement.style.setProperty('--text-secondary', textS);
+  document.documentElement.style.setProperty('--accent-glow', glowBg);
+  document.getElementById('mainNav').style.background = navBg;
+  document.getElementById('mobileMenu').style.background = card;
+
+  // Toggle icons
+  document.getElementById('moonIcon').style.display = isDark ? 'block' : 'none';
+  document.getElementById('sunIcon').style.display = isDark ? 'none' : 'block';
+  document.querySelector('.moon-mob').style.display = isDark ? 'block' : 'none';
+  document.querySelector('.sun-mob').style.display = isDark ? 'none' : 'block';
+}
+
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+document.getElementById('themeToggleMob').addEventListener('click', toggleTheme);
+
+// ===== MOBILE MENU =====
+const hamBtn = document.getElementById('hamBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+let menuOpen = false;
+
+function toggleMenu() {
+  menuOpen = !menuOpen;
+  mobileMenu.classList.toggle('open', menuOpen);
+  menuOverlay.classList.toggle('hidden', !menuOpen);
+  hamBtn.classList.toggle('ham-open', menuOpen);
+}
+
+hamBtn.addEventListener('click', toggleMenu);
+menuOverlay.addEventListener('click', toggleMenu);
+document.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => { if (menuOpen) toggleMenu(); }));
+
+// ===== SCROLL REVEAL =====
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => observer.observe(r));
+
+// ===== SMOOTH NAV SCROLL =====
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// ===== ACTIVE NAV HIGHLIGHT =====
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+  navLinks.forEach(l => {
+    l.style.color = l.getAttribute('href') === '#' + current ? '#6366f1' : 'var(--text-secondary)';
+  });
+});
+
+// ===== ELEMENT SDK =====
+const defaultConfig = {
+  hero_name: 'John Doe',
+  hero_tagline: 'Full Stack Java Developer',
+  hero_description: 'Passionate developer specializing in building robust, scalable backend systems and elegant frontends. I turn complex problems into clean, efficient solutions.',
+  about_text: 'I am a dedicated Full Stack Java Developer with a strong foundation in backend technologies and a keen eye for building seamless user experiences. With expertise spanning Spring Boot, Microservices, AWS, and modern frontend frameworks, I thrive on creating end-to-end solutions that are both performant and maintainable. I am always eager to learn emerging technologies and contribute to impactful projects.',
+  experience_title: 'Software Engineer',
+  experience_company: 'Tech Corp',
+  experience_duration: 'Jan 2023 - Present',
+  experience_desc: 'Developed and maintained microservices-based applications using Java, Spring Boot, and AWS. Collaborated with cross-functional teams to design RESTful APIs, implement event-driven architectures with Kafka, and deploy scalable solutions on cloud infrastructure.',
+  contact_phone: '+1 234 567 8900',
+  contact_email: 'you@email.com',
+  background_color: '#0a0a0f',
+  card_color: '#12121a',
+  text_color: '#e8e8ed',
+  accent_color: '#6366f1',
+  secondary_text_color: '#9898a6',
+  font_family: 'Sora',
+  font_size: 16
+};
+
+async function onConfigChange(config) {
+  const c = { ...defaultConfig, ...config };
+  document.getElementById('heroName').textContent = c.hero_name;
+  document.getElementById('footerName').textContent = c.hero_name;
+  document.getElementById('heroTagline').textContent = c.hero_tagline;
+  document.getElementById('heroDesc').textContent = c.hero_description;
+  document.getElementById('aboutText').textContent = c.about_text;
+  document.getElementById('expTitle').textContent = c.experience_title;
+  document.getElementById('expCompany').textContent = c.experience_company;
+  document.getElementById('expDuration').textContent = c.experience_duration;
+  document.getElementById('expDesc').textContent = c.experience_desc;
+  document.getElementById('contactPhone').textContent = c.contact_phone;
+  document.getElementById('contactEmail').textContent = c.contact_email;
+
+  // Colors
+  const accent = c.accent_color;
+  document.documentElement.style.setProperty('--accent', accent);
+  document.querySelectorAll('[style*="color:#6366f1"], [style*="color: #6366f1"]').forEach(el => {
+    if (el.style.color === 'rgb(99, 102, 241)' || el.style.color === '#6366f1') el.style.color = accent;
+  });
+
+  // Font
+  const font = c.font_family || defaultConfig.font_family;
+  const stack = font + ', sans-serif';
+  document.body.style.fontFamily = stack;
+
+  // Font size
+  const base = c.font_size || defaultConfig.font_size;
+  document.body.style.fontSize = base + 'px';
+}
+
+function mapToCapabilities(config) {
+  const c = { ...defaultConfig, ...config };
+  return {
+    recolorables: [
+      { get: () => c.background_color, set: v => { c.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => c.card_color, set: v => { c.card_color = v; window.elementSdk.setConfig({ card_color: v }); } },
+      { get: () => c.text_color, set: v => { c.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => c.accent_color, set: v => { c.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+      { get: () => c.secondary_text_color, set: v => { c.secondary_text_color = v; window.elementSdk.setConfig({ secondary_text_color: v }); } }
+    ],
+    borderables: [],
+    fontEditable: {
+      get: () => c.font_family || defaultConfig.font_family,
+      set: v => { c.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+    },
+    fontSizeable: {
+      get: () => c.font_size || defaultConfig.font_size,
+      set: v => { c.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+    }
+  };
+}
+
+function mapToEditPanelValues(config) {
+  const c = { ...defaultConfig, ...config };
+  return new Map([
+    ['hero_name', c.hero_name],
+    ['hero_tagline', c.hero_tagline],
+    ['hero_description', c.hero_description],
+    ['about_text', c.about_text],
+    ['experience_title', c.experience_title],
+    ['experience_company', c.experience_company],
+    ['experience_duration', c.experience_duration],
+    ['experience_desc', c.experience_desc],
+    ['contact_phone', c.contact_phone],
+    ['contact_email', c.contact_email]
+  ]);
+}
+
+if (window.elementSdk) {
+  window.elementSdk.init({ defaultConfig, onConfigChange, mapToCapabilities, mapToEditPanelValues });
+}
+
+// ===== DOWNLOAD RESUME =====
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  // Replace this URL with your PDF resume file
+  const resumePdfUrl = 'Nishaanth_Resume.pdf';
+  
+  const link = document.createElement('a');
+  link.href = resumePdfUrl;
+  link.download = 'Resume.pdf';
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
+// Init Lucide icons
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f0b543a03208c9a',t:'MTc3NjkzMTE2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
